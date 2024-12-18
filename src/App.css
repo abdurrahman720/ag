@@ -1,0 +1,416 @@
+/* Modern Variables */
+:root {
+  --primary-gradient: linear-gradient(135deg, #1E3C72 0%, #2A5298 100%);
+  --accent-color: #FF8C00;
+  --accent-light: rgba(255, 140, 0, 0.3);
+  --text-primary: #333;
+  --text-secondary: #666;
+  --white: #fff;
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --transition: all 0.2s ease;
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background: var(--primary-gradient);
+  color: var(--text-primary);
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* App Container */
+.app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Initial Login Buttons */
+.login {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.login button {
+  flex: 1;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent-color);
+  color: var(--white);
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--card-shadow);
+  white-space: nowrap;
+  text-align: center;
+}
+
+.login button:hover {
+  transform: translateY(-1px);
+  background: #e67e00;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Login Views */
+.login-view {
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+}
+
+.login-view h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--white);
+}
+
+.login-form {
+  background: var(--white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.name-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--accent-light);
+  border-radius: 6px;
+  transition: var(--transition);
+  background: var(--white);
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.name-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-light);
+}
+
+/* Login Button */
+.login-button {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: 500;
+  background: var(--accent-color);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.login-button:hover:not(:disabled) {
+  background: #e67e00;
+  transform: translateY(-1px);
+}
+
+.login-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Help Text Input */
+.help-text {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--accent-light);
+  border-radius: 6px;
+  resize: vertical;
+  min-height: 80px;
+  transition: var(--transition);
+  background: var(--white);
+  margin-bottom: 1rem;
+}
+
+.help-text:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-light);
+}
+
+/* Agent Controls */
+.agent-controls {
+  margin-top: 1rem;
+}
+
+.raise-hand-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.raise-hand, .cancel-request {
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+}
+
+.raise-hand {
+  background: var(--accent-color);
+  color: var(--white);
+}
+
+.raise-hand:hover {
+  background: #e67e00;
+  transform: translateY(-1px);
+}
+
+.cancel-request {
+  background: #ff4444;
+  color: var(--white);
+}
+
+.cancel-request:hover {
+  background: #cc0000;
+  transform: translateY(-1px);
+}
+
+/* Active Request */
+.active-request {
+  background: #f8f9fa;
+  padding: 1.2rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.assigned-closer {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.help-preview {
+  margin: 1rem 0;
+  font-style: italic;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.02);
+  padding: 0.8rem;
+  border-radius: 6px;
+}
+
+/* Status Indicators */
+.status-indicator {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: #e0e0e0;
+  color: var(--text-secondary);
+}
+
+.status-active {
+  background: var(--accent-color);
+  color: var(--white);
+}
+
+/* Closer Card */
+.closer-card {
+  background: var(--white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.hands-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.hand-item {
+  background: #f8f9fa;
+  padding: 1.2rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border: 1px solid #eee;
+}
+
+.hand-info {
+  flex-grow: 1;
+  margin-right: 1rem;
+}
+
+.hand-header h3 {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.timer {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.accept-button, .complete-button {
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.accept-button {
+  background: var(--accent-color);
+  color: var(--white);
+}
+
+.complete-button {
+  background: #4CAF50;
+  color: var(--white);
+}
+
+.accept-button:hover {
+  background: #e67e00;
+  transform: translateY(-1px);
+}
+
+.complete-button:hover {
+  background: #388E3C;
+  transform: translateY(-1px);
+}
+
+/* Current Assignment */
+.current-assignment {
+  background: #f8f9fa;
+  padding: 1.2rem;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.current-assignment h3 {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.assignment-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.agent-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.agent-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* No Hands State */
+.no-hands {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+.no-hands h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.no-hands p {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app {
+    padding: 0.5rem;
+  }
+
+  .login {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .login button {
+    width: 100%;
+  }
+
+  .login-view {
+    padding: 0.5rem;
+  }
+
+  .login-form, .closer-card {
+    padding: 1rem;
+  }
+
+  .hand-item {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .hand-info {
+    margin-right: 0;
+    margin-bottom: 0.8rem;
+  }
+
+  .accept-button, .complete-button {
+    width: 100%;
+  }
+
+  .assignment-details {
+    flex-direction: column;
+    gap: 0.8rem;
+    text-align: center;
+  }
+
+  .agent-info {
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+}
