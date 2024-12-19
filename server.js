@@ -20,6 +20,7 @@ const agentAssignments = new Map(); // agentId -> { closerId, closerName }
 
 io.on('connection', (socket) => {
   // Send current state to newly connected clients
+  console.log("socket connected to", socket.id)
   socket.emit('initialState', {
     raisedHands: Array.from(raisedHands.entries()).map(([agentId, data]) => ({
       agentId,
@@ -30,14 +31,14 @@ io.on('connection', (socket) => {
   socket.on('raiseHand', ({ agentId, name, helpText }) => {
     // Only allow raising hand if not already being helped
     if (!agentAssignments.has(agentId) && !raisedHands.has(agentId)) {
-      const handData = { 
-        name, 
-        helpText, 
-        timestamp: Date.now() 
+      const handData = {
+        name,
+        helpText,
+        timestamp: Date.now()
       };
       raisedHands.set(agentId, handData);
-      io.emit('handRaised', { 
-        agentId, 
+      io.emit('handRaised', {
+        agentId,
         ...handData
       });
     }
@@ -50,17 +51,17 @@ io.on('connection', (socket) => {
       if (raisedHands.has(agentId) && !agentAssignments.has(agentId)) {
         // Get agent info before removing from raised hands
         const agentInfo = raisedHands.get(agentId);
-        
+
         // Assign the agent to the closer
         closerAssignments.set(closerId, { agentId, closerName });
         agentAssignments.set(agentId, { closerId, closerName });
-        
+
         // Remove from raised hands
         raisedHands.delete(agentId);
-        
+
         // Notify everyone about the assignment
-        io.emit('requestAccepted', { 
-          closerId, 
+        io.emit('requestAccepted', {
+          closerId,
           closerName,
           agentId,
           agentName: agentInfo.name
@@ -72,14 +73,14 @@ io.on('connection', (socket) => {
   socket.on('cancelRequest', ({ agentId }) => {
     // Remove the request
     raisedHands.delete(agentId);
-    
+
     // If agent was assigned to a closer, clear that assignment
     if (agentAssignments.has(agentId)) {
       const { closerId } = agentAssignments.get(agentId);
       closerAssignments.delete(closerId);
       agentAssignments.delete(agentId);
     }
-    
+
     // Notify everyone about the cancellation
     io.emit('requestCancelled', { agentId });
   });
@@ -90,7 +91,7 @@ io.on('connection', (socket) => {
       // Clear assignments
       closerAssignments.delete(closerId);
       agentAssignments.delete(agentId);
-      
+
       // Notify everyone
       io.emit('requestCompleted', { closerId, agentId });
     }

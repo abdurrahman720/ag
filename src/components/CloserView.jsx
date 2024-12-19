@@ -1,74 +1,175 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-function CloserView({ socket, closerId }) {
-  const [name, setName] = useState('');
+function CloserView({ socket, closerId, setUserType }) {
+  const [name, setName] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [raisedHands, setRaisedHands] = useState([]);
   const [currentAssignment, setCurrentAssignment] = useState(null);
 
+  const savedCloser = JSON.parse(localStorage.getItem("activeCloser"));
+
+  console.log(savedCloser);
+
   useEffect(() => {
-    socket.on('initialState', ({ raisedHands: initialHands }) => {
-      setRaisedHands(initialHands.map(hand => ({
-        ...hand,
-        raisedAt: new Date(hand.timestamp).toLocaleTimeString()
-      })));
+    if (savedCloser) {
+      setIsLoggedIn(savedCloser.isLoggedIn);
+      setName(savedCloser.name);
+      setRaisedHands(savedCloser.raisedHands);
+      setCurrentAssignment(savedCloser.currentAssignment);
+    }
+  }, []);
+
+  useEffect(() => {
+    socket.on("initialState", ({ raisedHands: initialHands }) => {
+      setRaisedHands(
+        initialHands.map((hand) => ({
+          ...hand,
+          raisedAt: new Date(hand.timestamp).toLocaleTimeString(),
+        }))
+      );
+
+      localStorage.setItem(
+        "activeCloser",
+        JSON.stringify({
+          ...savedCloser,
+          raisedHands: initialHands.map((hand) => ({
+            ...hand,
+            raisedAt: new Date(hand.timestamp).toLocaleTimeString(),
+          })),
+        })
+      );
     });
 
-    socket.on('handRaised', ({ agentId, name, helpText, timestamp }) => {
-      setRaisedHands(prev => [...prev, { 
-        agentId,
-        name,
-        helpText,
-        raisedAt: new Date(timestamp).toLocaleTimeString()
-      }]);
+    socket.on("handRaised", ({ agentId, name, helpText, timestamp }) => {
+      // console.log(agentId, name, helpText, timestamp);
+      setRaisedHands((prev) => [
+        ...prev,
+        {
+          agentId,
+          name,
+          helpText,
+          raisedAt: new Date(timestamp).toLocaleTimeString(),
+        },
+      ]);
+
+      // console.log(savedCloser);
+
+      localStorage.setItem(
+        "activeCloser",
+        JSON.stringify({
+          ...savedCloser,
+          raisedHands: [
+            ...savedCloser?.raisedHands,
+            {
+              agentId,
+              name,
+              helpText,
+              timestamp,
+            },
+          ],
+        })
+      );
     });
 
-    socket.on('requestAccepted', ({ closerId: acceptingCloserId, agentId, agentName }) => {
-      if (acceptingCloserId === closerId) {
-        setCurrentAssignment({ agentId, agentName });
+    socket.on(
+      "requestAccepted",
+      ({ closerId: acceptingCloserId, agentId, agentName }) => {
+        if (acceptingCloserId === closerId) {
+          setCurrentAssignment({ agentId, agentName });
+        }
+        setRaisedHands((prev) =>
+          prev.filter((hand) => hand.agentId !== agentId)
+        );
+
+        localStorage.setItem(
+          "activeCloser",
+          JSON.stringify({
+            ...savedCloser,
+            currentAssignment: { agentId, agentName },
+            raisedHands: savedCloser.raisedHands.filter(
+              (hand) => hand.agentId !== agentId
+            ),
+          })
+        );
       }
-      setRaisedHands(prev => prev.filter(hand => hand.agentId !== agentId));
-    });
+    );
 
-    socket.on('requestCancelled', ({ agentId }) => {
+    socket.on("requestCancelled", ({ agentId }) => {
       if (currentAssignment?.agentId === agentId) {
         setCurrentAssignment(null);
       }
-      setRaisedHands(prev => prev.filter(hand => hand.agentId !== agentId));
+      setRaisedHands((prev) => prev.filter((hand) => hand.agentId !== agentId));
+
+      localStorage.setItem(
+        "activeCloser",
+        JSON.stringify({
+          ...savedCloser,
+          currentAssignment: null,
+          raisedHands: savedCloser.raisedHands.filter(
+            (hand) => hand.agentId !== agentId
+          ),
+        })
+      );
     });
 
-    socket.on('requestCompleted', ({ closerId: completingCloserId }) => {
+    socket.on("requestCompleted", ({ closerId: completingCloserId }) => {
       if (completingCloserId === closerId) {
         setCurrentAssignment(null);
+        localStorage.setItem(
+          "activeCloser",
+          JSON.stringify({
+            ...savedCloser,
+            currentAssignment: null,
+          })
+        );
       }
     });
 
     return () => {
-      socket.off('initialState');
-      socket.off('handRaised');
-      socket.off('requestAccepted');
-      socket.off('requestCancelled');
-      socket.off('requestCompleted');
+      socket.off("initialState");
+      socket.off("handRaised");
+      socket.off("requestAccepted");
+      socket.off("requestCancelled");
+      socket.off("requestCompleted");
     };
   }, [socket, closerId, currentAssignment]);
 
   const handleLogin = () => {
     if (name.trim()) {
       setIsLoggedIn(true);
+      localStorage.setItem(
+        "activeCloser",
+        JSON.stringify({
+          ...savedCloser,
+          isLoggedIn: true,
+        })
+      );
     }
   };
-
+  const handleLogout = () => {
+    console.log("logout");
+    try {
+      localStorage.removeItem("activeCloser");
+      setIsLoggedIn(false);
+      setName("");
+      setRaisedHands([]);
+      setCurrentAssignment(null);
+      setUserType(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const acceptRequest = (agentId) => {
     if (!currentAssignment) {
-      socket.emit('closerJoin', { closerId, closerName: name, agentId });
+      socket.emit("closerJoin", { closerId, closerName: name, agentId });
     }
   };
 
   const completeRequest = () => {
     if (currentAssignment) {
-      socket.emit('completeRequest', { 
-        closerId, 
-        agentId: currentAssignment.agentId 
+      socket.emit("completeRequest", {
+        closerId,
+        agentId: currentAssignment.agentId,
       });
     }
   };
@@ -82,11 +183,23 @@ function CloserView({ socket, closerId }) {
             type="text"
             placeholder="Enter your name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              localStorage.setItem(
+                "activeCloser",
+                JSON.stringify({
+                  closerId,
+                  name: e.target.value,
+                  isLoggedIn: false,
+                  raisedHands: [],
+                  currentAssignment: null,
+                })
+              );
+            }}
             className="name-input"
             autoFocus
           />
-          <button 
+          <button
             onClick={handleLogin}
             disabled={!name.trim()}
             className="login-button"
@@ -100,14 +213,23 @@ function CloserView({ socket, closerId }) {
 
   return (
     <div className="login-view">
-      <h2>Welcome, {name}</h2>
+      <h2>Welcome, {name} </h2>
+      <button
+        style={{ backgroundColor: "red" }}
+        onClick={handleLogout}
+        className="accept-button"
+      >
+        Logout
+      </button>
       <div className="closer-card">
         {currentAssignment ? (
           <div className="current-assignment">
             <h3>Current Assignment</h3>
             <div className="assignment-details">
               <div className="agent-info">
-                <p className="agent-name">Agent: {currentAssignment.agentName}</p>
+                <p className="agent-name">
+                  Agent: {currentAssignment.agentName}
+                </p>
                 <span className="status-indicator status-active">Active</span>
               </div>
               <button onClick={completeRequest} className="complete-button">
@@ -129,13 +251,9 @@ function CloserView({ socket, closerId }) {
                     <h3>{name}</h3>
                     <div className="timer">{raisedAt}</div>
                   </div>
-                  {helpText && (
-                    <div className="help-text">
-                      {helpText}
-                    </div>
-                  )}
+                  {helpText && <div className="help-text">{helpText}</div>}
                 </div>
-                <button 
+                <button
                   onClick={() => acceptRequest(agentId)}
                   className="accept-button"
                 >
