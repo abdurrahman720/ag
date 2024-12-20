@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  frontend-develop:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: agent-development
+    volumes:
+      - type: bind
+        source: ./frontend
+        target: /usr/src/app/agent-frontend
+        consistency: cached
+      - /frontend/node_modules
+    ports:
+      - "5175:5175"
+
+    depends_on:
+      - backend-develop
+    command: npm run dev
+    profiles:
+      - agent-development
+
+  backend-develop:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: agent-development
+    volumes:
+      - type: bind
+        source: ./backend
+        target: /usr/src/app/agent-backend
+        consistency: cached
+      - /backend/node_modules
+    ports:
+      - "5005:5005"
+    command: npm run dev
+    profiles:
+      - agent-development
