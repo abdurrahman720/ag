@@ -4,7 +4,7 @@ import AgentView from "./components/AgentView";
 import CloserView from "./components/CloserView";
 import "./App.css";
 
-const socket = io("http://localhost:5005");
+const socket = io("http://localhost:5009");
 
 function App() {
   const [userType, setUserType] = useState(null);

@@ -5,13 +5,13 @@ FROM ${BASE} AS base
 WORKDIR /usr/src/app/agent-backend
 
 # Install app dependencies
-COPY package*.json ./
+COPY package.json ./
 RUN npm install
 
 COPY . .
 
 # Expose port
-EXPOSE 5005
+EXPOSE 5009
 
 # Production
 FROM base AS agent-production

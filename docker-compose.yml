@@ -13,7 +13,6 @@ services:
       - /frontend/node_modules
     ports:
       - "5175:5175"
-
     depends_on:
       - backend-develop
     command: npm run dev
@@ -32,7 +31,7 @@ services:
         consistency: cached
       - /backend/node_modules
     ports:
-      - "5005:5005"
+      - "5009:5009"
     command: npm run dev
     profiles:
       - agent-development
