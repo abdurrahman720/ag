@@ -6,7 +6,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5175",
+    origin: ["http://localhost:5175", "https://barge.igds1.com/"],
     methods: ["GET", "POST"]
   }
 });
@@ -37,6 +37,7 @@ io.on('connection', (socket) => {
         timestamp: Date.now()
       };
       raisedHands.set(agentId, handData);
+      console.log("raised hand..");
       io.emit('handRaised', {
         agentId,
         ...handData
@@ -104,5 +105,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(5009, () => {
-  console.log('Server running on port 5009');
+  console.log('Server running on port 5009!!!');
 });

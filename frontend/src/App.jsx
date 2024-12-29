@@ -4,16 +4,30 @@ import AgentView from "./components/AgentView";
 import CloserView from "./components/CloserView";
 import "./App.css";
 
-const socket = io("http://localhost:5009");
+// const socket = io("https://barge.igds1.com", { transports: ["websocket"] });
 
 function App() {
   const [userType, setUserType] = useState(null);
   const [userId, setUserId] = useState("");
   const savedAgent = JSON.parse(localStorage.getItem("activeAgent"));
   const savedCloser = JSON.parse(localStorage.getItem("activeCloser"));
+  const [socket, setSocket] = useState(null);
 
+  console.log("got req...");
   console.log(savedCloser);
   console.log(savedAgent);
+
+  useEffect(() => {
+    // Create socket connection inside useEffect
+    const newSocket = io("https://barge.igds1.com", {
+      transports: ["websocket"],
+    });
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.close();
+    };
+  }, []);
 
   useEffect(() => {
     if (savedAgent) {

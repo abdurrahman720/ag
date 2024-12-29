@@ -7,7 +7,7 @@ export default defineConfig({
     port: 5175,
     proxy: {
       '/socket.io': {
-        target: 'http://localhost:5009',
+        target: 'https://barge.igds1.com',
         ws: true
       }
     }
