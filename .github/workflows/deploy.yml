@@ -1,0 +1,38 @@
+name: Deploy salestrainerai
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: SSH into VPS and deploy
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+
+            # Navigate to the project directory
+            cd apps/agentbarge
+
+            # Pull the latest changes from the repository
+            git pull origin main
+
+            # Gracefully stop the containers to allow proper shutdown
+             
+             docker-compose down -v frontend-develop backend-develop
+
+            # Optional: Add a short delay (e.g., 10 seconds) to allow services to stop gracefully
+            sleep 10    
+
+            # Rebuild and start the containers in the background
+             docker-compose --profile agent-development up --build -d
