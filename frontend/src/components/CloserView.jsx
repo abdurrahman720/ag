@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 
+const notificationSound = new Audio("/notification.mp3");
+const completedSound = new Audio("/completed.wav");
+
 function CloserView({ socket, closerId, setUserType }) {
   const [name, setName] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -7,8 +10,6 @@ function CloserView({ socket, closerId, setUserType }) {
   const [currentAssignment, setCurrentAssignment] = useState(null);
 
   const savedCloser = JSON.parse(localStorage.getItem("activeCloser"));
-
-  console.log(savedCloser);
 
   useEffect(() => {
     if (savedCloser) {
@@ -42,6 +43,10 @@ function CloserView({ socket, closerId, setUserType }) {
 
     socket.on("handRaised", ({ agentId, name, helpText, timestamp }) => {
       // console.log(agentId, name, helpText, timestamp);
+      notificationSound.play().catch((error) => {
+        console.error("Error playing notification sound:", error);
+      });
+
       setRaisedHands((prev) => [
         ...prev,
         {
@@ -114,6 +119,10 @@ function CloserView({ socket, closerId, setUserType }) {
 
     socket.on("requestCompleted", ({ closerId: completingCloserId }) => {
       if (completingCloserId === closerId) {
+        completedSound.play().catch((error) => {
+          console.error("Error playing notification sound:", error);
+        });
+
         setCurrentAssignment(null);
         localStorage.setItem(
           "activeCloser",

@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 
+const notificationSound = new Audio("/notification.mp3");
+const completedSound = new Audio("/completed.wav");
+
 function AgentView({ socket, agentId, setUserType }) {
   const [name, setName] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,6 +25,9 @@ function AgentView({ socket, agentId, setUserType }) {
   useEffect(() => {
     socket.on("requestAccepted", ({ agentId: acceptedAgentId, closerName }) => {
       if (acceptedAgentId === agentId) {
+        notificationSound.play().catch((error) => {
+          console.error("Error playing notification sound:", error);
+        });
         setHandRaised(true);
         setAssignedCloser(closerName);
 
@@ -38,6 +44,9 @@ function AgentView({ socket, agentId, setUserType }) {
 
     socket.on("requestCompleted", ({ agentId: completedAgentId }) => {
       if (completedAgentId === agentId) {
+        completedSound.play().catch((error) => {
+          console.error("Error playing notification sound:", error);
+        });
         setHandRaised(false);
         setHelpText("");
         setAssignedCloser(null);
