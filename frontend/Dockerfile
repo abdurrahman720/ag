@@ -24,8 +24,7 @@ FROM base AS agent-production
 RUN npm run build
 
 #Install serve to run the application
-RUN npm install -g serve
-CMD ["serve", "-s", "build", "-l", "5175"]
+CMD ["npm", "run", "preview"]
 
 FROM base AS agent-development
 CMD ["npm", "run", "dev"]
