@@ -28,7 +28,6 @@ services:
       - "5175:5175"
     depends_on:
       - backend-production
-    command: npm run build
     profiles:
       - agent-production
 
@@ -56,6 +55,5 @@ services:
       target: agent-production
     ports:
       - "5009:5009"
-    command: npm run build
     profiles:
       - agent-production
