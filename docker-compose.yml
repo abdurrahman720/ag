@@ -19,6 +19,19 @@ services:
     profiles:
       - agent-development
 
+  frontend-production:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: agent-production
+    ports:
+      - "5175:5175"
+    depends_on:
+      - backend-production
+    command: npm run build
+    profiles:
+      - agent-production
+
   backend-develop:
     build:
       context: ./backend
@@ -35,3 +48,14 @@ services:
     command: npm run dev
     profiles:
       - agent-development
+
+  backend-production:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: agent-production
+    ports:
+      - "5009:5009"
+    command: npm run build
+    profiles:
+      - agent-production

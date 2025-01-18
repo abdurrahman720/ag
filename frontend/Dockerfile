@@ -25,7 +25,7 @@ RUN npm run build
 
 #Install serve to run the application
 RUN npm install -g serve
-CMD ["serve", "-s", "build", "-l", "3000"]
+CMD ["serve", "-s", "build", "-l", "5175"]
 
 FROM base AS agent-development
 CMD ["npm", "run", "dev"]
